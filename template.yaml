@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: GenAI Serverless Chat API
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: python3.14
+
+Resources:
+  ChatFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: genai-chat-function
+      Handler: src/handler.lambda_handler
+      CodeUri: .
+      MemorySize: 256
+
+      Events:
+        ChatApi:
+          Type: Api
+          Properties:
+            Path: /chat
+            Method: post
+
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway Endpoint
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/chat"
+
+  LambdaFunction:
+    Description: Lambda Function Name
+    Value: !Ref ChatFunction
